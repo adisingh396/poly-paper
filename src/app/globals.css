@@ -1,0 +1,98 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Light theme (default fallback) */
+:root,
+[data-theme="light"] {
+  --pk-page-max: 1350px;
+
+  --pk-surface: #ffffff;
+  --pk-card: #ffffff;
+  --pk-elevated: #f4f5f7;
+  --pk-elevated-hover: #eceef1;
+  --pk-content-primary: #23272d;
+  --pk-content-secondary: #6b727b;
+  --pk-content-tertiary: #8b929b;
+  --pk-content-quaternary: #bfc3ca;
+  --pk-border: #e6e8ec;
+  --pk-border-strong: #d4d7dc;
+  --pk-blue: #2e5cff;
+  --pk-blue-tint: rgba(46, 92, 255, 0.12);
+  --pk-green: #007e26;
+  --pk-green-tint: rgba(0, 154, 60, 0.15);
+  --pk-red: #df0c10;
+  --pk-red-tint: rgba(222, 11, 11, 0.09);
+  --pk-yellow: #eab308;
+}
+
+/* Dark theme (default on load) */
+[data-theme="dark"] {
+  --pk-surface: #0c0e13;
+  --pk-card: #1c1f27;
+  --pk-elevated: #2d3037;
+  --pk-elevated-hover: #363a43;
+  --pk-content-primary: #ffffff;
+  --pk-content-secondary: #b6bbc4;
+  --pk-content-tertiary: #999ea7;
+  --pk-content-quaternary: #62646a;
+  --pk-border: #2d3037;
+  --pk-border-strong: #45474e;
+  --pk-blue: #3262ff;
+  --pk-blue-tint: rgba(50, 98, 255, 0.2);
+  --pk-green: #2dca65;
+  --pk-green-tint: rgba(45, 202, 101, 0.16);
+  --pk-red: #fe3d32;
+  --pk-red-tint: rgba(254, 61, 50, 0.16);
+  --pk-yellow: #eab308;
+}
+
+@layer base {
+  * {
+    border-color: var(--pk-border);
+    box-sizing: border-box;
+  }
+  body {
+    background-color: var(--pk-surface);
+    color: var(--pk-content-primary);
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@layer components {
+  .pk-container {
+    width: 100%;
+    max-width: var(--pk-page-max);
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+  }
+  @media (min-width: 1024px) {
+    .pk-container {
+      padding-inline: 2.375rem;
+    }
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .pk-live-dot {
+    animation: pk-pulse 1.4s ease-in-out infinite;
+  }
+  @keyframes pk-pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.35;
+    }
+  }
+}

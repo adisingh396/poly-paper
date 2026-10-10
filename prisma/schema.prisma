@@ -1,0 +1,75 @@
+// Prisma schema for the paper-trading clone.
+// SQLite keeps everything local; no external DB required.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String     @id @default(cuid())
+  email        String     @unique
+  username     String     @unique
+  passwordHash String
+  cashBalance  Float       @default(1000)
+  createdAt    DateTime   @default(now())
+
+  positions    Position[]
+  trades       Trade[]
+}
+
+// One row per (user, outcome token) holding.
+model Position {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Polymarket identifiers so we can re-price and settle against live data.
+  marketId     String   // Gamma market id
+  conditionId  String   // on-chain condition id (settlement key)
+  tokenId      String   // CLOB ERC-1155 token id for the outcome
+  marketSlug   String
+  marketQuestion String
+  outcome      String   // human label, e.g. "Yes" / "No"
+  outcomeIndex Int
+
+  shares       Float    @default(0)
+  avgCost      Float    @default(0) // average price paid per share (0..1)
+  settled      Boolean  @default(false)
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([userId, tokenId])
+  @@index([userId])
+}
+
+// Immutable ledger of every paper fill and settlement.
+model Trade {
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  marketId       String
+  conditionId    String
+  tokenId        String
+  marketSlug     String
+  marketQuestion String
+  outcome        String
+  outcomeIndex   Int
+
+  side           String   // BUY | SELL | SETTLE
+  shares         Float
+  price          Float    // execution price per share (0..1)
+  cost           Float    // signed cash delta (negative = cash out)
+  realizedPnl    Float    @default(0)
+
+  createdAt      DateTime @default(now())
+
+  @@index([userId])
+  @@index([userId, tokenId])
+}
